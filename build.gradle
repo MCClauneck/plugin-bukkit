@@ -1,0 +1,87 @@
+plugins {
+    id 'java-library'
+    id 'maven-publish'
+}
+
+group = project.property('project-group')
+version = "${project.property('project-version')}-${project.property('project-iteration')}"
+
+repositories {
+    mavenCentral()
+    maven {
+        url = 'https://hub.spigotmc.org/nexus/content/repositories/snapshots/'
+    }
+    maven {
+        url = 'https://oss.sonatype.org/content/repositories/snapshots'
+    }
+    maven {
+        // MCClauneck Plugin API artifact (io.github.mcclauneck:api)
+        name = "MCClauneckPluginApi"
+        url = "https://maven.pkg.github.com/MCClauneck/plugin-api"
+        credentials {
+            username = System.getenv('GITHUB_ACTOR') ?: System.getenv('AGENT_GITHUB_NAME') ?: System.getenv('USER_GITHUB_NAME')
+            password = System.getenv('GITHUB_TOKEN') ?: System.getenv('AGENT_GITHUB_TOKEN') ?: System.getenv('USER_GITHUB_TOKEN')
+        }
+    }
+    maven {
+        // MCClauneck Plugin Common artifact (io.github.mcclauneck:common)
+        name = "MCClauneckPluginCommon"
+        url = "https://maven.pkg.github.com/MCClauneck/plugin-common"
+        credentials {
+            username = System.getenv('GITHUB_ACTOR') ?: System.getenv('AGENT_GITHUB_NAME') ?: System.getenv('USER_GITHUB_NAME')
+            password = System.getenv('GITHUB_TOKEN') ?: System.getenv('AGENT_GITHUB_TOKEN') ?: System.getenv('USER_GITHUB_TOKEN')
+        }
+    }
+}
+
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(25)
+    }
+}
+
+dependencies {
+    api "io.github.mcclauneck:api:${project.version}"
+    implementation "io.github.mcclauneck:common:${project.version}"
+    compileOnly 'org.spigotmc:spigot-api:26.1.2-R0.1-SNAPSHOT'
+}
+
+base {
+    archivesName = "MCEconomyBukkit"
+}
+
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            from components.java
+
+            pom {
+                name = project.name
+                description = "MCClauneck Plugin Bukkit"
+                url = "https://mcclauneck.github.io/website"
+                developers {
+                    developer {
+                        id = "jetsadawijit"
+                        name = "jetsadawijit"
+                        url = "https://jetsadawijit.github.io"
+                    }
+                }
+            }
+        }
+    }
+
+    repositories {
+        maven {
+            name = "GitHubPackages"
+            url = "https://maven.pkg.github.com/${project.property('git-org-name')}/${project.property('git-repository')}"
+            credentials {
+                username = System.getenv('GITHUB_ACTOR') ?: System.getenv('AGENT_GITHUB_NAME') ?: System.getenv('USER_GITHUB_NAME')
+                password = System.getenv('GITHUB_TOKEN') ?: System.getenv('AGENT_GITHUB_TOKEN') ?: System.getenv('USER_GITHUB_TOKEN')
+            }
+        }
+    }
+}
+
+tasks.register('clean', Delete) {
+    delete layout.buildDirectory
+}
