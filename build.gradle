@@ -41,8 +41,8 @@ java {
 }
 
 dependencies {
-    api "io.github.mcclauneck:api:${project.version}"
-    implementation "io.github.mcclauneck:common:${project.version}"
+    api "io.github.mcclauneck:api:2026.0.7-2"
+    implementation "io.github.mcclauneck:common:2026.0.7-2"
     compileOnly 'org.spigotmc:spigot-api:26.1.2-R0.1-SNAPSHOT'
 }
 
